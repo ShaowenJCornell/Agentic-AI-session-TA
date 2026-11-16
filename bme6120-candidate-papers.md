@@ -1,0 +1,640 @@
+# BME 6120 Project 4: Candidate Papers
+
+Working list as of Nov 16, 2026. Five candidates fill the five slots, all still untested. The next step is a download test from the cluster for each candidate, recorded in its "Check results" table below.
+
+Companion file: `bme6120-agentic-ai-workshop-brief.md`, which has the full task and course context.
+
+## Selection rules
+
+Every Project 4 paper must meet all of these:
+
+1. **Recent: 2024 or later preferred**, counting the peer-reviewed version, not the preprint date. Earlier papers are allowed when their data and instructions are especially clear (decided Nov 16, 2026).
+2. **Public data with clear instructions.** A student can download the data today with no application, login, form or data use agreement. The paper or repository makes clear which files produce the target figure.
+3. **No controlled-access or identifiable patient data** (no dbGaP, EGA, or company-held data), since the data will go through AI tools. **No data deposited in China's archives** (GSA, GSA-Human or NGDC); recent small datasets there are usually behind access agreements.
+4. **Public analysis code** to compare an independent reproduction against.
+5. **One target figure with checkable numbers**, not only a visual pattern.
+6. **A manageable size.** The files a group needs should stay well under a few GB and run on a 2-core GitHub Codespace (free storage is 15 GB a month).
+7. **Spread across the course.** The five papers cover different course modules and include at least one suited to R. Check module names against the syllabus.
+
+Papers from the De Vlaminck lab are welcome but not required.
+
+## Status at a glance
+
+| Candidate | Paper | Area | Main language | Data | Status |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Mantri et al. 2024, PNAS | Spatial transcriptomics, mouse ovary | Python | GEO, figshare; size unknown | Not yet tested |
+| 2 | Greenwald et al. 2024, Cell | Spatial transcriptomics, glioblastoma | R | Zenodo; about 0.5 GB needed of 25.3 GB | Not yet tested |
+| 3 | Moore et al. 2025, Nat Commun | Cell-free RNA, pancreatic cancer detection | R | Count tables and metadata in the GitHub repo, 62 MB | Repo read Nov 16; not yet run |
+| 4 | Massoni-Badosa et al. 2024, Immunity | Single-cell atlas, human tonsil | R (Bioconductor); Python after conversion | Loaded one cell compartment at a time through a Bioconductor package; the full RNA object is 10 GB | Repo read Nov 16; not yet tested |
+| 5 | Wu et al. 2021, Nat Genet | Single-cell tumor microenvironment, breast cancer | R; processed data also as `.h5ad` on CELLxGENE | Processed counts on GEO and CELLxGENE; work on one compartment | Repo read Nov 16; not yet tested |
+
+Coverage: two spatial papers (1, 2), one cell-free paper (3) and two single-cell papers (4, 5). Nothing covers clonal expansion, which the October plan named as a course module; check module names against the syllabus.
+
+**R is needed.** Candidates 2, 3, 4 and 5 run in R, but the current dev container draft (`bme6120-devcontainer.json`, Nov 16) installs Python only. Add R before the template repo is built.
+
+## Instructions for the download test
+
+These are for whoever runs the test on the cluster, including an AI agent such as Claude Code.
+
+The goal is to answer one question per paper: **can a student get the needed data, quickly, from public links, and load it?** Do not run the authors' full analysis.
+
+1. Work in cluster scratch space, one new directory per paper. Do not use your home quota, and never put downloaded data in a git repo.
+2. **List before you download.** Use each repository's listing API to record every file's name, size and checksum first. Take exact file names from that listing, not from this document.
+3. Download only the files marked as needed below. Never download raw sequencing reads (FASTQ or SRA) or the large image files.
+4. Verify checksums where the repository provides them.
+5. Unpack one sample. Record its unpacked size and what is inside (`du -sh`, and a file tree).
+6. Load that sample in Python (scanpy) or R (Seurat) and record its dimensions.
+7. Record how long the downloads took.
+8. Fill in the paper's "Check results" table, and change nothing else in this file.
+9. Stop and report if a link needs a login, a form or an agreement, returns an error, or is missing. Do not look for workarounds such as mirrors.
+
+End each paper with a one-line verdict: **Ready**, **Ready with a subset** (say which files), or **Not usable** (say why).
+
+### Tools the downloads need
+
+Recorded Nov 16, 2026, from the cluster test, for a Codespace that starts with nothing installed. Each paper's "Check results" table has the details.
+
+| Paper | Tools to download the data | Extra installs |
+| --- | --- | --- |
+| All five | `git`, `curl`, `python3` (standard library only, to read the listing APIs), `md5sum`, `tar`, `unzip` | None. These come with Debian-based images such as the draft's `python:3.12-bookworm` (expected, not yet checked in a built Codespace). |
+| 1 Mantri | Basic tools only | None |
+| 2 Greenwald | Basic tools, plus `gdown` for `Inputs.zip` on Google Drive | `pip install gdown` |
+| 3 Moore | `git` only | None |
+| 4 Tonsil | R, because the data download runs inside R through Bioconductor's ExperimentHub | R 4.3 or later, plus `BiocManager` and `HCATonsilData`: 90 R packages, 50 of them compiled from source. Debian 12's own `r-base` is R 4.2.2, which is too old. |
+| 5 Wu | Basic tools only | None |
+
+To open the downloaded files, a group also needs `scanpy` or `anndata` (Papers 1, 5 and a converted Paper 4), or R with Seurat (Papers 2, 4, 5). Opening has not been tested yet.
+
+---
+
+## Candidate 1: Mantri et al. 2024, PNAS
+
+Mantri M, Zhang HH, Spanos E, Ren YA, De Vlaminck I. *A spatiotemporal molecular atlas of the ovulating mouse ovary.* PNAS, January 2024. DOI [10.1073/pnas.2317418121](https://doi.org/10.1073/pnas.2317418121). Preprint: bioRxiv [10.1101/2023.08.21.554210](https://doi.org/10.1101/2023.08.21.554210).
+
+**What it is.** Slide-seq spatial transcriptomics at 10 µm resolution across mouse ovulation. It covers untreated immature ovaries and hormone-treated ovaries at 0, 1, 4, 6, 8, 11 and 12 hours after hCG, 10 ovaries in all. Analysis is in Python (scanpy, cell2location, pySCENIC, squidpy).
+
+**Where the data are**
+
+| Source | What it holds | Size |
+| --- | --- | --- |
+| GEO [GSE240271](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE240271) | Sequencing data; whether processed count matrices are included is unknown | Unknown |
+| figshare collection [10.6084/m9.figshare.c.6930214](https://doi.org/10.6084/m9.figshare.c.6930214) | The full processed AnnData object and high-resolution H&E images | Unknown |
+| GitHub [madhavmantri/mouse_ovulation](https://github.com/madhavmantri/mouse_ovulation) | Notebooks, bead barcode location files, metadata CSVs, H&E JPEGs | Unknown |
+
+**Possible targets** (from the preprint; confirm against the PNAS version):
+
+- 121,536 spatial transcriptomes after quality control.
+- Seven broad cell types.
+- 335 manually segmented follicles.
+- 77 genes up-regulated one hour after hCG (log fold change above 1.0, adjusted p below 0.01).
+
+**Known gaps**
+
+- The README gives no software versions, package list or run steps, and does not say which notebook makes which figure. This is a weakness on the "clear instructions" rule.
+- The preprint says "ten ovary tissue sections" in one place and "eight Slide-seq datasets" in the Methods.
+- Whether a paper from the instructor's own lab suits a graded project is a question for Prof. De Vlaminck.
+
+**Likely needed files.** The processed AnnData object from figshare, and the metadata from GitHub. Do not download raw reads from SRA.
+
+**Commands**
+
+```bash
+mkdir -p mantri2024 && cd mantri2024
+
+# 1. Code repository (small)
+git clone --depth 1 https://github.com/madhavmantri/mouse_ovulation.git
+du -sh mouse_ovulation
+find mouse_ovulation -maxdepth 2 | sort > repo_tree.txt
+
+# 2. figshare listing: names, sizes and md5 of every file, no download yet
+curl -sSL https://api.figshare.com/v2/collections/6930214/articles -o figshare_articles.json
+python3 - <<'EOF' > figshare_files.tsv
+import json, urllib.request
+for a in json.load(open("figshare_articles.json")):
+    url = f"https://api.figshare.com/v2/articles/{a['id']}/files"
+    for f in json.load(urllib.request.urlopen(url)):
+        print(a["title"], f["name"], f["size"], f.get("computed_md5", ""), f["download_url"], sep="\t")
+EOF
+cat figshare_files.tsv
+
+# 3. GEO listing: sample names and supplementary files, no download yet
+curl -sSL "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE240271&targ=all&form=text&view=brief" -o geo_brief.txt
+grep -E "^\^SAMPLE|Sample_title|supplementary_file" geo_brief.txt
+curl -sSL https://ftp.ncbi.nlm.nih.gov/geo/series/GSE240nnn/GSE240271/suppl/ -o geo_suppl.html
+
+# 4. Download the processed AnnData object only, using its download_url from figshare_files.tsv
+#    curl -sSL -o <name>.h5ad "<download_url>"
+#    md5sum <name>.h5ad    # compare with computed_md5
+
+# 5. Load it
+python3 - <<'EOF'
+import scanpy as sc
+a = sc.read_h5ad("<name>.h5ad")
+print(a)
+print(a.obs.columns.tolist())
+EOF
+```
+
+**Questions to answer**
+
+1. How large is the processed AnnData object, and does it hold all sections, near 121,536 beads?
+2. Does it already include cell-type labels and time points in `obs`?
+3. Does GEO hold processed count matrices per sample, or raw reads only?
+4. Which notebook produces which figure? Is there a requirements or environment file?
+
+**Check results** (fill in)
+
+| Item | Result |
+| --- | --- |
+| Date and cluster tested | |
+| GitHub repo size | |
+| figshare: files and sizes | |
+| GEO: processed files present? sizes | |
+| Files a group needs, total size | |
+| Download time | |
+| Checksums match | |
+| Loads in scanpy? Dimensions | |
+| Cell types and time points present? | |
+| Tools and packages the download needs | `git`, `curl`, `python3` (standard library only, to read the figshare listing) and `md5sum`. Nothing to install. Opening the `.h5ad` needs `anndata` or `scanpy` (not yet tested). |
+| Problems | |
+| **Verdict** | |
+
+---
+
+## Candidate 2: Greenwald et al. 2024, Cell
+
+Greenwald, Galili Darnell, Hoefflin, et al. *Integrative spatial analysis reveals a multi-layered organization of glioblastoma.* Cell 187(10):2485–2501, 2024.
+
+**What it is.** 10x Visium spatial transcriptomics of 13 glioblastoma and 6 IDH-mutant glioma samples, plus CODEX protein imaging of 12 glioblastoma samples. Analysis is in R. It suits a group that prefers R.
+
+**Where the data are**
+
+| Source | What it holds | Size |
+| --- | --- | --- |
+| Zenodo [12624860](https://zenodo.org/records/12624860), CC BY 4.0 | 38 files: Visium archives, CODEX images, H&E scans | 25.3 GB in all |
+| GitHub [tiroshlab/Spatial_Glioma](https://github.com/tiroshlab/Spatial_Glioma) | Six R modules (R 4.1.1) | Small |
+| Google Drive [Inputs.zip](https://drive.google.com/file/d/1YFOwEDFLpyxG6WX243FNA7lnrVSaiVL-/view?usp=sharing) | All inputs the R code expects | Unknown |
+
+**What is in the 25.3 GB**
+
+| Group of files | Size | Needed? |
+| --- | --- | --- |
+| 12 CODEX whole-slide images (`*.ome.tif`) | 0.7–4.5 GB each, about 20 GB in all | No |
+| 2 CODEX QuPath projects (`CODEX_*.zip`) | about 4 GB | No |
+| `HE_scans.zip` | 131 MB | No |
+| 13 glioblastoma Visium archives (`GBM_*`) | 12–50 MB each, about 400 MB | Yes |
+| 7 IDH-mutant Visium archives (`IDHm_*`) | about 120 MB; `IDHm_BWH35A.tar.gz` is 45 bytes and looks empty | Optional |
+| `visium_dataset_description.csv`, `readme_CODEX.txt` | under 11 kB each | Yes |
+
+One archive, `GBM_zh1019inf.zip`, is a zip file, not a tar.gz.
+
+**Possible targets.** Module 2 of the R code reproduces Figs. 4A–C: spatial coherence and organizational zones. The paper also defines 14 spatial metaprograms, and reports that about 48% of spots fall in structured regions (preprint value; confirm in the published version).
+
+**Known gaps**
+
+- The README lists no R packages or versions beyond R 4.1.1, and calls the code "working code", not a cleaned release.
+- The R code reads from `Inputs.zip` on Google Drive, not from Zenodo, and its size is not stated.
+- Whether Figs. 4A–C can be reached from the Zenodo Visium archives alone, without `Inputs.zip`, is unknown.
+
+**Commands**
+
+```bash
+mkdir -p greenwald2024 && cd greenwald2024
+
+# 1. Zenodo listing: name, size and md5 of all 38 files, no download yet
+curl -sSL https://zenodo.org/api/records/12624860 -o zenodo_record.json
+python3 - <<'EOF' > zenodo_files.tsv
+import json
+for f in json.load(open("zenodo_record.json"))["files"]:
+    print(f["key"], f["size"], f["checksum"], sep="\t")
+EOF
+cat zenodo_files.tsv
+
+# 2. Keep only the Visium archives and the description files
+grep -E "^(GBM_|IDHm_|visium_dataset_description\.csv|readme_CODEX\.txt)" zenodo_files.tsv | cut -f1 > needed.txt
+cat needed.txt    # expect about 22 names, and no .ome.tif files
+
+# 3. Download them one at a time
+time while read -r f; do
+  curl -sSL --retry 3 -o "$f" "https://zenodo.org/records/12624860/files/${f}?download=1"
+done < needed.txt
+du -ch $(cat needed.txt) | tail -1
+
+# 4. Verify checksums
+grep -F -f needed.txt zenodo_files.tsv | awk -F'\t' '{sub(/^md5:/, "", $3); print $3 "  " $1}' > needed.md5
+md5sum -c needed.md5
+
+# 5. Unpack one sample and look inside
+mkdir -p unpacked/GBM_MGH258
+tar -xzf GBM_MGH258.tar.gz -C unpacked/GBM_MGH258
+du -sh unpacked/GBM_MGH258
+find unpacked/GBM_MGH258 | sort | head -60
+head -5 visium_dataset_description.csv
+
+# 6. The R code's inputs from Google Drive
+python3 -m pip install --user gdown
+gdown 1YFOwEDFLpyxG6WX243FNA7lnrVSaiVL- -O Inputs.zip
+ls -lh Inputs.zip
+unzip -l Inputs.zip | tail -1     # unpacked size
+unzip -l Inputs.zip | head -60    # contents
+
+# 7. Code
+git clone --depth 1 https://github.com/tiroshlab/Spatial_Glioma.git
+```
+
+To load one sample, first look at what step 5 unpacked. If it looks like Space Ranger output (a `filtered_feature_bc_matrix.h5` and a `spatial/` folder), try `Seurat::Load10X_Spatial("unpacked/GBM_MGH258/...")` in R or `scanpy.read_visium(...)` in Python, and record the number of spots and genes.
+
+**Questions to answer**
+
+1. What is the unpacked size of one Visium sample, and of all 13 glioblastoma samples?
+2. What format is each sample in, and does it load directly?
+3. Is `Inputs.zip` still shared, how large is it, and what does it contain?
+4. Can Module 2 (Figs. 4A–C) run from `Inputs.zip` on a 2-core machine? Which R packages did it need?
+
+**Check results** (fill in)
+
+| Item | Result |
+| --- | --- |
+| Date and cluster tested | |
+| Visium archives: count and total compressed size | |
+| One sample unpacked: size and contents | |
+| All 13 glioblastoma samples unpacked: size | |
+| Download time | |
+| Checksums match | |
+| Loads in Seurat or scanpy? Spots × genes | |
+| `Inputs.zip`: reachable? size? contents | |
+| R packages Module 2 needed | |
+| Tools and packages the download needs | Zenodo files: `curl`, `python3` (standard library only, to read the Zenodo listing), `md5sum`, `tar`, and `unzip` for `GBM_zh1019inf.zip`. `Inputs.zip` on Google Drive: the Python package `gdown` (`pip install gdown`; it also installs requests, beautifulsoup4, tqdm and filelock). Plain `curl` was not tried for Google Drive. No login was asked. Disk: `Inputs.zip` is 6.07 GB and unpacks to 7.9 GB, about 14 GB with both, close to the 15 GB of free Codespace storage. |
+| Problems | |
+| **Verdict** | |
+
+---
+
+## Candidate 3: Moore et al. 2025, Nature Communications
+
+Moore TW, Spiliotopoulos E, Callahan RL, …, Sears RC, Morgan TK, Ngo TTM. *Cell free RNA detection of pancreatic cancer in pre diagnostic high risk and symptomatic patients.* Nature Communications 16:7345, 2025 (accepted July 24, 2025). DOI [10.1038/s41467-025-62685-y](https://doi.org/10.1038/s41467-025-62685-y). Thuy Ngo lab, Oregon Health & Science University.
+
+**What it is.** Plasma cell-free RNA sequencing of 248 patients referred for endoscopic ultrasound biopsy of the pancreas: a training cohort (CEDAR, 153 patients) and an independent validation cohort (BCC, 95 patients). The authors normalize the counts with their own method, find genes that separate pancreatic cancer (PDAC) from benign disease, pancreatitis, IPMN and other cancers, build a classifier, and compare it with the clinical marker CA19-9. Analysis is in R.
+
+**Why it fits the class.** It meets every selection rule, and it is the best match so far for "clear instructions". The raw count matrix, metadata and reference files are in the GitHub repo. The README says one script, `main_script.R`, rebuilds every result and figure in under 10 minutes, and it ships the authors' figures for comparison. Random seeds are set.
+
+**Where the data are**
+
+| Source | What it holds | Size |
+| --- | --- | --- |
+| GitHub [ohsu-cedar-comp-hub/2024_ngolab_cfRNA](https://github.com/ohsu-cedar-comp-hub/2024_ngolab_cfRNA) | `Analysis_Scripts/`: raw gene counts (56,607 genes × 248 samples), metadata, QC metrics, survival table, healthy-donor reference counts, Human Protein Atlas tissue matrix, and the R scripts. `Figures/`: the authors' output figures. `cfRNA_pipeline/`: the Snakemake pipeline from reads to counts | 62 MB without git history |
+| Zenodo [10.5281/zenodo.15678348](https://doi.org/10.5281/zenodo.15678348) | Archived copy of the code | Not checked |
+| SRA PRJNA1135202 (patients) and PRJNA1199029 (healthy-donor reference) | Raw reads | Not needed; do not download |
+
+I cloned the repo on Nov 16, 2026 and read it, but ran nothing. The metadata match the paper's cohort sizes exactly: CEDAR 153 (48 benign, 59 pancreatitis, 16 IPMN, 20 PDAC, 3 islet cell tumor, 7 other cancer) and BCC 95.
+
+**De-identification.** The public metadata drop patient sex and give age only in 10-year bins. No identifiable data are involved; raw reads are not needed.
+
+**Possible targets**
+
+- 29 differentially expressed genes, PDAC against all other diagnoses in the training cohort (Wilcoxon rank-sum, FDR ≤ 0.05), Fig. 3a.
+- Training cross-validation AUCs of 0.945, 0.965 and 0.956 for PDAC against benign, non-cancer and all, Fig. 4a–c.
+- Independent validation AUCs of 0.904, 0.937 and 0.896 for the same three comparisons, Fig. 5a–c.
+- With standard TPM normalization instead, training AUC 0.916 but validation AUC 0.682 (Supp. Figs. S12–13). The repo has a separate script for this, `no_intrinsic_norm.R`.
+- CA19-9 at 37 U/ml: NPV 0.942 and 0.935, PPV 0.364 and 0.417 in the two cohorts, Fig. 6a–b.
+
+**Known gaps, found by reading the code**
+
+- **One input path is wrong.** `main_script.R` line 62 reads `../Tissue_RNA_Atlas.csv`, but the repo holds `Analysis_Scripts/Tissue_RNA_Atlas.csv.gz`.
+- **Results that need patient sex cannot be reproduced.** The script still uses `meta$Sex` for the male and female AUCs (paper: 0.849 and 0.95) and for the survival model, but sex was removed from the public metadata. Table 1 needs race and sex, also removed.
+- **Age is binned, but the code compares it as a number.** `paper_figures.R` splits at age 65 (`>= 65`), while the paper reports patients 66 and older. With bins, only a 66-and-older split is possible.
+- **Running the script overwrites the authors' figures,** because it writes to `../Figures/`. Copy that folder first, so the authors' versions are kept for comparison.
+- **No package versions.** The README asks for R 4.1 or later and lists no packages. The scripts load about 20, including edgeR and ComplexHeatmap from Bioconductor.
+
+**Possible extensions**
+
+- Repeat the classifier with liver-expressed genes removed, to test the paper's point that much of the signal comes from the liver.
+- Compare cf-normalization with TPM on the validation cohort, which the authors report as their key methods result.
+- Try a different classifier or feature-selection method and compare validation AUCs.
+
+**Commands**
+
+```bash
+mkdir -p moore2025 && cd moore2025
+git clone --depth 1 https://github.com/ohsu-cedar-comp-hub/2024_ngolab_cfRNA.git
+cd 2024_ngolab_cfRNA
+du -sh --exclude=.git .
+cp -r Figures Figures_authors          # keep the authors' figures before anything is overwritten
+
+# Fix the one wrong path: put the atlas where main_script.R expects it
+gunzip -c Analysis_Scripts/Tissue_RNA_Atlas.csv.gz > Tissue_RNA_Atlas.csv
+
+# R packages the scripts load
+Rscript -e 'install.packages(c("MASS","pROC","e1071","umap","tidyverse","randomForest","ggsci","ggpubr","vegan","tableone","survminer","survival","smotefamily","pheatmap","magick","RColorBrewer","HGNChelper","BiocManager"), repos="https://cloud.r-project.org")'
+Rscript -e 'BiocManager::install(c("edgeR","ComplexHeatmap"), update=FALSE)'
+
+# Run, and keep the log. Expect it to stop at the first step that needs patient sex.
+cd Analysis_Scripts
+time Rscript -e 'source("main_script.R"); writeLines(capture.output(sessionInfo()), "../sessionInfo.txt")' 2>&1 | tee ../main_script.log
+```
+
+If the run stops at a step that needs `meta$Sex`, record the line, comment out the sex-specific parts, and run again. Then compare the new figures with `Figures_authors/`, especially `AUC_train.svg` and `AUC_val.svg`.
+
+**Questions to answer**
+
+1. Does `main_script.R` run end to end after the two fixes? How long does it take, and how much memory?
+2. Are there 29 DE genes? Do the training and validation AUCs match Figs. 4 and 5?
+3. Which outputs could not be produced without sex or exact age?
+4. Which package versions did the run use (`sessionInfo()`)?
+
+**Check results** (fill in)
+
+| Item | Result |
+| --- | --- |
+| Date and cluster tested | |
+| Repo size | |
+| Runs after fixes? Run time, memory | |
+| Number of DE genes (paper: 29) | |
+| Training AUCs (paper: 0.945, 0.965, 0.956) | |
+| Validation AUCs (paper: 0.904, 0.937, 0.896) | |
+| Outputs that failed or were skipped | |
+| R and package versions | |
+| Tools and packages the download needs | `git` only; the data are in the repo. Running the analysis needs R and the packages listed under Commands, which is a separate step from the download. |
+| Problems | |
+| **Verdict** | |
+
+---
+
+## Candidate 4: Massoni-Badosa et al. 2024, Immunity
+
+Massoni-Badosa R, Aguilar-Fernández S, Nieto JC, Soler-Vila P, Elosua-Bayes M, …, Martin-Subero JI, Heyn H. *An atlas of cells in the human tonsil.* Immunity 57(2):379–399, February 13, 2024. DOI [10.1016/j.immuni.2024.01.006](https://doi.org/10.1016/j.immuni.2024.01.006). Open access at [PMC10869140](https://pmc.ncbi.nlm.nih.gov/articles/PMC10869140). Human Cell Atlas project, CNAG-CRG Barcelona.
+
+**What it is.** A multi-modal atlas of 17 human tonsils (6 children, 8 young adults, 3 older adults): more than 556,000 cells across scRNA-seq, scATAC-seq, Multiome, CITE-seq and spatial transcriptomics, annotated into 121 cell types and states. The RNA part alone holds 462,352 cells and 37,378 genes. Analysis was done in R with Seurat.
+
+**Why it fits the class.** It is the best-documented dataset so far. The authors publish the data at five levels, from raw reads to an interactive browser, and the middle level is a Bioconductor package, [HCATonsilData](https://bioconductor.org/packages/release/data/experiment/html/HCATonsilData.html). It loads one cell compartment at a time as a SingleCellExperiment, with the authors' annotations, and has a vignette. Everything is open: CC BY 4.0, no application, and donor metadata with age and sex are public.
+
+**Where the data are**
+
+| Level | Source | What it holds | Size |
+| --- | --- | --- | --- |
+| Raw reads | ArrayExpress [E-MTAB-13687](https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-13687) | FASTQ for all modalities | Large; not needed |
+| Matrices | Zenodo [11355186](https://zenodo.org/records/11355186), version 3 (Zenodo notes a newer version; the GitHub README links [10373041](https://zenodo.org/records/10373041)) | CellRanger outputs per modality; `scRNA-seq.zip` is 4.4 GB | 47.1 GB in version 3 |
+| Seurat objects | Zenodo [8373756](https://zenodo.org/records/8373756) | One object per modality; `TonsilAtlasSeuratRNA.tar.gz` is 10.0 GB, `TonsilAtlasSeuratCITE.tar.gz` 390 MB | 51.8 GB in all |
+| Package | Bioconductor [HCATonsilData](https://bioconductor.org/packages/release/data/experiment/html/HCATonsilData.html) | RNA by compartment (`cellType` argument), plus spatial; CITE, ATAC and Multiome download from Zenodo | Per compartment; not stated |
+| Browser | [Azimuth tonsil reference](https://azimuth.hubmapconsortium.org/references/#Human%20-%20Tonsil%20v2) | Interactive markers and label transfer | n/a |
+| Code | GitHub [Single-Cell-Genomics-Group-CNAG-CRG/TonsilAtlas](https://github.com/Single-Cell-Genomics-Group-CNAG-CRG/TonsilAtlas) | The full research pipeline (1,747 files) and HTML reports; `scRNA-seq/figures_and_tables/` holds the scripts for most figures | Not measured |
+
+I read the GitHub README and file list on Nov 16, 2026, but downloaded no data.
+
+**The main constraint: size.** The whole RNA atlas will not fit in an 8 GB Codespace. A group must pick one compartment, such as myeloid cells or plasma cells, and load only that.
+
+**Possible targets** (pick one compartment)
+
+- Myeloid compartment: four slan-like myeloid subtypes, Fig. 6D.
+- Plasma cells: 20 subpopulations, Fig. 5A.
+- Rare precursors: 70 pre-B cells and 12 pre-T cells in the discovery cohort, Fig. S1F.
+- Validation cohort: mean label-transfer confidence of 0.825, Fig. 7B–E.
+
+**Known gaps**
+
+- **Access is through R.** HCATonsilData is a Bioconductor package; a Python group would convert a compartment to `.h5ad` with zellkonverter, in R, first.
+- **The code is a full research pipeline, not a one-command reproduction.** It spans Seurat 3.2 and 4.1, Signac, pySCENIC and cluster job scripts. Current Seurat is version 5, so old scripts may not run unchanged. That suits an independent reproduction better than a rerun.
+- **Annotations are updated over time.** HCATonsilData has a `version` argument; record which version a group used, since cell-type names and counts can change between versions.
+- **Per-compartment sizes are not documented.** The cluster test should record them.
+
+**Possible extensions**
+
+- Re-cluster one compartment independently (Seurat or scanpy) and measure agreement with the authors' labels.
+- Annotate the compartment automatically (for example CellTypist or Azimuth) and compare with the expert labels.
+- Test the age-related composition shifts of Fig. 7F with donor-level statistics, since there are only 17 donors.
+
+**Commands**
+
+```bash
+mkdir -p tonsil2024 && cd tonsil2024
+
+# 1. Code and documentation. The full clone includes many HTML reports; record its size.
+git clone --depth 1 https://github.com/Single-Cell-Genomics-Group-CNAG-CRG/TonsilAtlas.git
+du -sh TonsilAtlas
+ls TonsilAtlas/scRNA-seq/figures_and_tables
+
+# 2. Install the data package
+Rscript -e 'install.packages("BiocManager", repos="https://cloud.r-project.org"); BiocManager::install(c("HCATonsilData","zellkonverter"), update=FALSE)'
+
+# 3. List the compartments, without loading counts
+Rscript -e 'library(HCATonsilData); print(listCellTypes(assayType = "RNA"))'
+
+# 4. Load one compartment; record size, cells, genes, annotation columns and peak memory.
+#    Use a compartment name exactly as listCellTypes() printed it.
+/usr/bin/time -v Rscript -e '
+library(HCATonsilData); library(zellkonverter)
+sce <- HCATonsilData(assayType = "RNA", cellType = "myeloid")
+print(sce)
+print(colnames(SummarizedExperiment::colData(sce)))
+writeH5AD(sce, "myeloid.h5ad")
+print(ExperimentHub::getExperimentHubOption("CACHE"))
+' 2>&1 | tee load_myeloid.log
+ls -lh myeloid.h5ad
+
+# 5. Check that the converted file opens in Python
+python3 -c 'import scanpy as sc; a = sc.read_h5ad("myeloid.h5ad"); print(a)'
+```
+
+Repeat step 4 for the plasma-cell compartment. Do not load `cellType = "All"` on a laptop or Codespace.
+
+**Questions to answer**
+
+1. Which compartments does `listCellTypes()` return, and how many cells are in the myeloid and plasma-cell compartments?
+2. How large is each download, and what peak memory did loading take?
+3. Which annotation columns are present (levels, donor, age group), and which version of the annotation was loaded?
+4. Do the four slan-like subtypes and the 20 plasma-cell subpopulations appear in the labels?
+5. Which script in `figures_and_tables/` makes Figs. 5A and 6D?
+
+**Check results** (fill in)
+
+| Item | Result |
+| --- | --- |
+| Date and cluster tested | |
+| GitHub repo size | |
+| Compartments listed | |
+| Myeloid: cells × genes, download size, peak memory | |
+| Plasma cells: cells × genes, download size, peak memory | |
+| Annotation columns and version | |
+| Opens in scanpy after conversion? | |
+| Scripts for Figs. 5A and 6D | |
+| Tools and packages the download needs | R, because the data come down inside R through ExperimentHub. `HCATonsilData` needs R 4.3 or later; the test used R 4.5.2, Bioconductor 3.22 and HCATonsilData 1.8.0. Debian 12's own `r-base` is R 4.2.2, which is too old, so install R from CRAN's repository or use a rocker image. Install `BiocManager` from CRAN, then `BiocManager::install("HCATonsilData")`. On a bare R this is 90 packages, 50 of them compiled from source. Those builds need a C/C++ compiler and the development files for libcurl, OpenSSL and ImageMagick's Magick++ (`libmagick++-dev`, for the `magick` package). On the cluster most packages were already installed, so only 10 were added, in 111 s; a bare Codespace will take much longer (not measured). In an interactive R session, ExperimentHub may first ask to create its cache folder; answer yes. Code: `git`, but the shallow clone is 2.3 GB, so do not clone it in a Codespace. A Python group also needs `zellkonverter` in R to convert to `.h5ad` (not yet tested). |
+| Problems | |
+| **Verdict** | |
+
+---
+
+## Candidate 5: Wu et al. 2021, Nature Genetics
+
+Wu SZ, …, Swarbrick A. *A single-cell and spatially resolved atlas of human breast cancers.* Nature Genetics 53:1334–1347, 2021. DOI [10.1038/s41588-021-00911-1](https://doi.org/10.1038/s41588-021-00911-1). Swarbrick lab, Garvan Institute, Sydney.
+
+**Published before 2024.** Allowed under the relaxed year rule because its data are open in several places and well documented.
+
+**What it is.** A single-cell atlas of the breast tumor microenvironment: 26 primary tumors (11 triple-negative, 10 ER+, 5 HER2+) and more than 100,000 cells, with CITE-seq protein data for part of the cohort and Visium spatial data for 5 more tumors. Analysis is in R (Seurat).
+
+**Why it fits the class.** It is a single study, not a merged atlas, so its labels are consistent. The processed data with cell-type labels are open without application, the code is public, and a group can work on one compartment of cells at a time.
+
+**Where the data are**
+
+| Source | What it holds | Size |
+| --- | --- | --- |
+| GEO [GSE176078](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE176078) | Processed scRNA-seq counts with metadata | Unknown; not checked |
+| CELLxGENE [collection 65db5560](https://cellxgene.cziscience.com/collections/65db5560-7aeb-4c66-b150-5bd914480eb8) | The same processed data as `.h5ad`, plus the spatial data | Unknown; could not be read from here |
+| Broad Single Cell Portal [SCP1039](https://singlecell.broadinstitute.org/single_cell/study/SCP1039) | Processed data and CITE-seq data | Downloads need sign-in; use GEO or CELLxGENE instead |
+| Zenodo [10.5281/zenodo.4739739](https://doi.org/10.5281/zenodo.4739739) | Intermediate spatial files | Not needed |
+| EGA EGAS00001005173 | Raw reads | Controlled; not needed |
+| GitHub [Swarbricklab-code/BrCa_cell_atlas](https://github.com/Swarbricklab-code/BrCa_cell_atlas) | 115 files: per-sample processing, integration, reclustering, inferCNV, SCSubtype (with its gene signatures, Supplementary Table S4), ecotypes, spatial analysis, figure scripts | Small |
+
+I read the GitHub README and file list on Nov 16, 2026, but downloaded no data.
+
+**Compartment sizes reported in the paper**
+
+| Compartment | Cells |
+| --- | --- |
+| Stromal and immune cells | 71,220 |
+| Neoplastic (cancer) cells, 21 tumors | 24,489 |
+| Myeloid cells | 9,675 |
+| Plasmablasts | 3,525 |
+| B cells | 3,202 |
+
+**Possible targets**
+
+- SCSubtype, the authors' single-cell version of the PAM50 breast cancer subtypes, applied to the neoplastic cells. The gene signatures and scoring script are in the repo (`scSubtype/`), so a group can rerun the classifier and compare the calls per tumor with the paper.
+- Seven recurrent gene modules (GM1–GM7) in neoplastic cells, Extended Data Fig. 3.
+- PD-L1/PD-L2+ macrophage populations in the myeloid compartment, Extended Data Fig. 7.
+- Cell-type composition by clinical subtype (TNBC, ER+, HER2+), Fig. 1 and Extended Data Fig. 1.
+
+**Known gaps**
+
+- **Not a one-command reproduction.** The repo is a set of research scripts organized by analysis step, mostly R, with cluster job scripts. It has no top-level run script or package list.
+- **Ecotypes are out of reach.** The nine ecotypes use CIBERSORTx, which needs registration for a token, plus METABRIC bulk data. Leave them out.
+- **Download sizes are unknown.** GEO and CELLxGENE could not be listed from here; the cluster test should record them.
+- **Labels can differ by source.** CELLxGENE re-curates metadata to its own schema, so record which file a group used.
+
+**Possible extensions**
+
+- Re-cluster the myeloid compartment independently and compare with the authors' labels.
+- Run SCSubtype on cancer cells from another public breast cancer dataset and compare the calls with its clinical labels.
+- Compare cell-type composition between triple-negative and ER+ tumors with patient-level statistics.
+
+**Commands**
+
+```bash
+mkdir -p wu2021 && cd wu2021
+
+# 1. Code
+git clone --depth 1 https://github.com/Swarbricklab-code/BrCa_cell_atlas.git
+du -sh BrCa_cell_atlas
+ls BrCa_cell_atlas/scSubtype
+
+# 2. GEO: list the supplementary files before downloading anything
+curl -sSL "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE176078&targ=self&form=text&view=brief" -o geo_brief.txt
+grep supplementary_file geo_brief.txt
+#    For each file listed, get its size without downloading it:
+#    curl -sSI "<link from the listing>" | grep -i content-length
+
+# 3. Download the processed scRNA-seq file only (name from step 2), then look inside
+#    curl -sSLO "<link>"
+#    tar -tzvf <file>.tar.gz | head -20
+#    Expect a sparse count matrix, gene and barcode lists, and a metadata table with cell-type labels.
+
+# 4. Load and record dimensions and label columns (adjust paths to what step 3 unpacked)
+python3 - <<'PY'
+import glob
+print(glob.glob("**/*", recursive=True)[:40])
+# If the bundle is an MTX triplet plus a metadata table:
+# import scanpy as sc, pandas as pd
+# a = sc.read_mtx("<matrix>.mtx").T
+# meta = pd.read_csv("<metadata>.csv", index_col=0)
+# print(a.shape, meta.columns.tolist())
+PY
+
+# 5. CELLxGENE alternative: from the collection page, copy the .h5ad download link for the
+#    scRNA-seq dataset, record its size (curl -sSI <link> | grep -i content-length), and open
+#    it in backed mode so the whole file is not loaded into memory:
+#    python3 -c 'import scanpy as sc; a = sc.read_h5ad("<file>.h5ad", backed="r"); print(a)'
+```
+
+**Questions to answer**
+
+1. Which processed files does GEO list, and how large are they?
+2. What does the metadata hold: cell-type labels at which levels, patient, clinical subtype?
+3. How large is the CELLxGENE `.h5ad`, and does it carry the same labels?
+4. How many myeloid and neoplastic cells are in the file, against the paper's 9,675 and 24,489?
+5. Does `scSubtype/Calculatingscoresandplotting.R` run on the neoplastic cells? Which packages did it need?
+
+**Check results** (fill in)
+
+| Item | Result |
+| --- | --- |
+| Date and cluster tested | |
+| GEO: files and sizes | |
+| CELLxGENE: file size; same labels? | |
+| Cells × genes; label columns | |
+| Myeloid and neoplastic cells (paper: 9,675 and 24,489) | |
+| SCSubtype script: runs? Packages needed | |
+| Peak memory to load one compartment | |
+| Tools and packages the download needs | `curl`, `python3` (standard library only, to read the CELLxGENE listing) and `tar`. Nothing to install. GEO and CELLxGENE give no checksums, so compare file sizes with the listing instead. Opening the files needs `scanpy` or `anndata` for the `.h5ad` files, and `scanpy` or R's `Matrix` package for the GEO matrix bundle (not yet tested). |
+| Problems | |
+| **Verdict** | |
+
+---
+
+## Rejected
+
+| Paper | Reason |
+| --- | --- |
+| Elovitz MA, …, Rasmussen M. *Molecular subtyping of hypertensive disorders of pregnancy.* Nat Commun 16:2948, 2025. [DOI](https://doi.org/10.1038/s41467-025-58157-y) | Cell-free RNA data are not public. They are identifiable patient data held by Mirvie Inc., available only on request under a data use agreement. Rejected Nov 13, 2026. |
+| Vijayan Selvarajan A, Kabiraj D, De S. *Fragmentation-induced coverage biases in cell-free DNA sequencing affect the clinical sensitivity of liquid biopsies.* Commun Biol 9:1471, 2026. [DOI](https://doi.org/10.1038/s42003-026-10414-6) | Replaced by Moore et al. 2025 for the cell-free slot, Nov 16, 2026. The repo shares only 1,000-row samples of its three input tables, with no script to build the full tables; a group would have to rebuild them from about 99 cBioPortal cohorts plus the Zhang et al. 2021 cfDNA data, whose per-variant depth may not be public. |
+| Li et al. 2024, Sci Data (NSCLC macrophages, 68,370 cells). [DOI](https://doi.org/10.1038/s41597-024-03885-x) | Data in China's GSA-Human archive behind a data access agreement. Checked Nov 16, 2026. |
+| Pan et al. 2024, Nature (tumor vasculature, 31 cancer types). [DOI](https://doi.org/10.1038/s41586-024-07698-1) | Data in China's NGDC archive. Checked Nov 16, 2026. |
+| Otsuji et al. 2024, npj Precis Oncol (stage IV breast cancer, 16,368 cells). [DOI](https://doi.org/10.1038/s41698-024-00723-6) | Only one patient. Checked Nov 16, 2026. |
+| Watson et al. 2020, Science (clonal hematopoiesis fitness) | Published before 2024 (rejected under the original rule; could be reconsidered under the relaxed one) |
+| Williams et al. 2016, Nat Genet (neutral tumor evolution) | Published before 2024 |
+| Loyfer et al. 2023, Nature (methylation atlas, cfDNA origins) | Published before 2024 |
+| Janesick et al. 2023, Nat Commun (Xenium, Visium and single-cell) | Published before 2024 |
+| Sasani et al. 2019, eLife (Session 2 demo paper, not a project paper) | Published before 2024. Open question whether the demo may be an exception |
+
+## Backups for the single-cell slot
+
+Checked Nov 16, 2026. Not on the list, but usable if Candidate 4 or 5 fails its download test.
+
+| Paper | Data | Why it is a backup |
+| --- | --- | --- |
+| Guimarães et al. 2024, Nat Commun, pan-cancer myeloid cells in the tumor microenvironment. [DOI](https://doi.org/10.1038/s41467-024-49916-4) | One 2.6 GB `.h5ad` (391,963 cells) on [CELLxGENE](https://cellxgene.cziscience.com/collections/3f7c572c-cd73-4b51-a313-207c7f20f188); load only the myeloid cells | 29 myeloid states across 7 cancers. The figure notebooks on [GitHub](https://github.com/bioinformatics-inca/MyeloidDerivedCells_in_TME) load private `.RData` files that were not shared, so only an independent reproduction is possible |
+| Sade-Feldman et al. 2018, Cell, melanoma checkpoint immunotherapy. [DOI](https://doi.org/10.1016/j.cell.2018.10.038) | GEO GSE120575: 16,291 immune cells from 48 tumor samples. The Broad portal copy has downloads disabled | The smallest option, with a clean target (TCF7+ CD8 T cells predict response). No public analysis code found, older plate-based data, and from 2018 |
+
+## Adding a new candidate
+
+Copy this block for each new paper, and fill it in before any download test.
+
+```markdown
+## Candidate N: <First author> et al. <year>, <journal>
+
+<Full citation with DOI.>
+
+**What it is.** <Assay, organism or cohort, sample count, analysis language.>
+
+**Where the data are**
+
+| Source | What it holds | Size |
+| --- | --- | --- |
+| <GEO / Zenodo / figshare accession, with link> | | |
+| <Code repository, with link> | | |
+
+**Rule check**
+
+| Rule | Pass? | Evidence |
+| --- | --- | --- |
+| Published 2024 or later, or an agreed exception | | <journal date> |
+| Data public, no application | | <quote the Data availability statement> |
+| No controlled or patient data; not in China's archives | | |
+| Public code | | <link> |
+| One numeric target | | <figure and number> |
+| Needed files well under a few GB | | |
+
+**Possible targets.** <Figure panels and numbers.>
+
+**Commands.** <Listing step, download of needed files only, checksum, load.>
+
+**Check results.** <Same table as above.>
+```
