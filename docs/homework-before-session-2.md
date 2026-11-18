@@ -31,7 +31,7 @@ Email the report, as HTML or PDF, together with the link to your GitHub reposito
 
 ## Choose a paper
 
-There are five candidates: two spatial, one cell-free and two single-cell. All have public data that need no application or data use agreement, and public analysis code to compare against.
+There are five candidates: two spatial, one cell-free and two single-cell. More than one team can pick the same paper. All have public data that need no application or data use agreement, and public analysis code to compare against.
 
 | # | Paper | Area · language | Data | Conditions |
 | --- | --- | --- | --- | --- |
