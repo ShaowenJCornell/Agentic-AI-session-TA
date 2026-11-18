@@ -8,7 +8,8 @@ Opening a GitHub Codespace from this repo builds the dev container defined in
 [`.devcontainer/devcontainer.json`](.devcontainer/devcontainer.json), so every student gets the
 same environment:
 
-- Python 3.12
+- Python 3.12, with numpy, pandas, scipy, matplotlib, seaborn, statsmodels, scikit-learn and
+  ipykernel (versions pinned in [`requirements.txt`](requirements.txt))
 - Node.js
 - Claude Code (`claude`)
 - GitHub Copilot CLI (`copilot`)
@@ -23,6 +24,5 @@ itself: you cannot push to it.
 
 ## Status
 
-Draft. The dev container was test-built on Nov 16, 2026, and all four agent CLIs installed. Still
-to add: a `requirements.txt` with the course's pinned Python packages (the dev container's Python
-step installs from it), and R.
+Draft. The dev container was test-built on Nov 16, 2026, and all four agent CLIs installed.
+`requirements.txt` was added on Nov 18 and test-installed on Python 3.12. Still to add: R.
