@@ -1,8 +1,8 @@
 # BME 6120 Project 4: Candidate Papers
 
-Working list as of Nov 16, 2026. Five candidates fill the five slots, all still untested. The next step is a download test from the cluster for each candidate, recorded in its "Check results" table below.
+Working list as of Nov 18, 2026. Five candidates fill the five slots, and all five passed a download test: in a GitHub Codespace on Nov 16 (recorded in each "Check results" table below), and on the cluster (cbsuvlaminck6) on Nov 16 and again on Nov 18, where every needed file downloaded with matching sizes and checksums. The one exception is Greenwald's `Inputs.zip`, which Google Drive refused on Nov 18 (see Candidate 2). The analyses themselves have not been run.
 
-Companion file: `bme6120-agentic-ai-workshop-brief.md`, which has the full task and course context.
+Companion file, kept outside this repo: `agentic-ai-workshop-task-brief.md`, which has the full task and course context.
 
 ## Selection rules
 
@@ -22,11 +22,11 @@ Papers from the De Vlaminck lab are welcome but not required.
 
 | Candidate | Paper | Area | Main language | Data | Status |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Mantri et al. 2024, PNAS | Spatial transcriptomics, mouse ovary | Python | GEO, figshare; size unknown | Not yet tested |
-| 2 | Greenwald et al. 2024, Cell | Spatial transcriptomics, glioblastoma | R | Zenodo; about 0.5 GB needed of 25.3 GB | Not yet tested |
-| 3 | Moore et al. 2025, Nat Commun | Cell-free RNA, pancreatic cancer detection | R | Count tables and metadata in the GitHub repo, 62 MB | Repo read Nov 16; not yet run |
-| 4 | Massoni-Badosa et al. 2024, Immunity | Single-cell atlas, human tonsil | R (Bioconductor); Python after conversion | Loaded one cell compartment at a time through a Bioconductor package; the full RNA object is 10 GB | Repo read Nov 16; not yet tested |
-| 5 | Wu et al. 2021, Nat Genet | Single-cell tumor microenvironment, breast cancer | R; processed data also as `.h5ad` on CELLxGENE | Processed counts on GEO and CELLxGENE; work on one compartment | Repo read Nov 16; not yet tested |
+| 1 | Mantri et al. 2024, PNAS | Spatial transcriptomics, mouse ovary | Python | One processed `.h5ad` on figshare, 1.47 GB | **Ready** (download tested) |
+| 2 | Greenwald et al. 2024, Cell | Spatial transcriptomics, glioblastoma | R | Zenodo, about 0.5 GB needed of 25.3 GB; the R code's `Inputs.zip`, 6.07 GB on Google Drive | **Ready with a subset**; `Inputs.zip` hit a Google Drive download limit on Nov 18 |
+| 3 | Moore et al. 2025, Nat Commun | Cell-free RNA, pancreatic cancer detection | R | Count tables and metadata in the GitHub repo, 62 MB | **Ready** for download; analysis not yet run |
+| 4 | Massoni-Badosa et al. 2024, Immunity | Single-cell atlas, human tonsil | R (Bioconductor); Python after conversion | Loaded one cell compartment at a time through a Bioconductor package (myeloid 170 MB, plasma cells 473 MB); the full RNA object is 10 GB | **Ready with a subset** (one compartment) |
+| 5 | Wu et al. 2021, Nat Genet | Single-cell tumor microenvironment, breast cancer | R; processed data also as `.h5ad` on CELLxGENE | Processed counts on GEO (559 MB) and CELLxGENE (one compartment, 18–323 MB) | **Ready** (download tested) |
 
 Coverage: two spatial papers (1, 2), one cell-free paper (3) and two single-cell papers (4, 5). Nothing covers clonal expansion, which the October plan named as a course module; check module names against the syllabus.
 
@@ -56,14 +56,14 @@ Recorded Nov 16, 2026, from the cluster test, for a Codespace that starts with n
 
 | Paper | Tools to download the data | Extra installs |
 | --- | --- | --- |
-| All five | `git`, `curl`, `python3` (standard library only, to read the listing APIs), `md5sum`, `tar`, `unzip` | None. These come with Debian-based images such as the draft's `python:3.12-bookworm` (expected, not yet checked in a built Codespace). |
+| All five | `git`, `curl`, `python3` (standard library only, to read the listing APIs), `md5sum`, `tar`, `unzip` | None. These come with Debian-based images such as the draft's `python:3.12-bookworm` (confirmed in the Nov 16 Codespace test). |
 | 1 Mantri | Basic tools only | None |
 | 2 Greenwald | Basic tools, plus `gdown` for `Inputs.zip` on Google Drive | `pip install gdown` |
 | 3 Moore | `git` only | None |
 | 4 Tonsil | R, because the data download runs inside R through Bioconductor's ExperimentHub | R 4.3 or later, plus `BiocManager` and `HCATonsilData`: 90 R packages, 50 of them compiled from source. Debian 12's own `r-base` is R 4.2.2, which is too old. |
 | 5 Wu | Basic tools only | None |
 
-To open the downloaded files, a group also needs `scanpy` or `anndata` (Papers 1, 5 and a converted Paper 4), or R with Seurat (Papers 2, 4, 5). Opening has not been tested yet.
+To open the downloaded files, a group also needs `scanpy` or `anndata` (Papers 1, 5 and a converted Paper 4), or R with Seurat (Papers 2, 4, 5). In the Codespace test the files opened with `anndata`, `h5py` or `scipy` (Papers 1, 2, 5) and in R through HCATonsilData (Paper 4); scanpy and Seurat themselves were not tried.
 
 ---
 
@@ -77,9 +77,9 @@ Mantri M, Zhang HH, Spanos E, Ren YA, De Vlaminck I. *A spatiotemporal molecular
 
 | Source | What it holds | Size |
 | --- | --- | --- |
-| GEO [GSE240271](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE240271) | Sequencing data; whether processed count matrices are included is unknown | Unknown |
-| figshare collection [10.6084/m9.figshare.c.6930214](https://doi.org/10.6084/m9.figshare.c.6930214) | The full processed AnnData object and high-resolution H&E images | Unknown |
-| GitHub [madhavmantri/mouse_ovulation](https://github.com/madhavmantri/mouse_ovulation) | Notebooks, bead barcode location files, metadata CSVs, H&E JPEGs | Unknown |
+| GEO [GSE240271](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE240271) | Sequencing data, plus one raw-count `.h5ad.gz` per sample (8 samples) | 283 MB of raw-count files (`GSE240271_RAW.tar`) |
+| figshare collection [10.6084/m9.figshare.c.6930214](https://doi.org/10.6084/m9.figshare.c.6930214) | The full processed AnnData object and high-resolution H&E images | `.h5ad` 1.47 GB; images 3.3 GB |
+| GitHub [madhavmantri/mouse_ovulation](https://github.com/madhavmantri/mouse_ovulation) | Notebooks, bead barcode location files, metadata CSVs, H&E JPEGs | 343 MB without git history |
 
 **Possible targets** (from the preprint; confirm against the PNAS version):
 
@@ -146,7 +146,7 @@ EOF
 
 | Item | Result |
 | --- | --- |
-| Date and cluster tested | Nov 16, 2026. **Codespace test**, not the cluster: a GitHub Codespace built from the draft dev container (`python:3.12-bookworm`), 4 cores, 15 GB RAM (more than the 2-core student Codespace), 9.6 GB free on `/workspaces`. Downloads went to `/tmp`, a separate temporary disk, and were deleted afterwards. |
+| Date and cluster tested | Nov 16, 2026. **Codespace test**, not the cluster: a GitHub Codespace built from the draft dev container (`python:3.12-bookworm`), 4 cores, 15 GB RAM (more than the 2-core student Codespace), 9.6 GB free on `/workspaces`. Downloads went to `/tmp`, a separate temporary disk, and were deleted afterwards. Also tested on the cluster (cbsuvlaminck6) on Nov 16 and again on Nov 18: the figshare listing was unchanged, and the `.h5ad` downloaded in 33 s (44 MB/s) with matching md5. |
 | GitHub repo size | 573 MB as a shallow clone, 343 MB without `.git`: `notebooks/` 116 MB (16 notebooks), `metadata_csvs/` 113 MB, `ovary_H&E_JPEGs/` 98 MB, `barcode_location_files/` 18 MB. No requirements or environment file. The clone took 11 s. |
 | figshare: files and sizes | 9 files in 2 articles. `adata_ovary_combined_fullprocessed_annotated.h5ad`, 1,467,037,290 bytes (1.47 GB). 8 H&E images (`*_ovary_stitch_stitch.tif`), 358–534 MB each, 3.3 GB in all; not needed. |
 | GEO: processed files present? sizes | Yes. 8 samples (immature untreated, and 0, 1, 4, 6, 8, 11 and 12 h after hCG), each with a raw-count file `GSM*_adata_ovary_*_spatial_raw_counts.h5ad.gz` of 26–47 MB; 283 MB together as `GSE240271_RAW.tar`. The 0 h file downloaded in 0.6 s, unpacks to 100 MB, and holds 75,094 beads × 31,053 genes before quality control, with only QC columns in `obs`. |
@@ -173,7 +173,7 @@ Greenwald, Galili Darnell, Hoefflin, et al. *Integrative spatial analysis reveal
 | --- | --- | --- |
 | Zenodo [12624860](https://zenodo.org/records/12624860), CC BY 4.0 | 38 files: Visium archives, CODEX images, H&E scans | 25.3 GB in all |
 | GitHub [tiroshlab/Spatial_Glioma](https://github.com/tiroshlab/Spatial_Glioma) | Six R modules (R 4.1.1) | Small |
-| Google Drive [Inputs.zip](https://drive.google.com/file/d/1YFOwEDFLpyxG6WX243FNA7lnrVSaiVL-/view?usp=sharing) | All inputs the R code expects | Unknown |
+| Google Drive [Inputs.zip](https://drive.google.com/file/d/1YFOwEDFLpyxG6WX243FNA7lnrVSaiVL-/view?usp=sharing) | All inputs the R code expects | 6.07 GB; 7.87 GB unpacked |
 
 **What is in the 25.3 GB**
 
@@ -193,8 +193,8 @@ One archive, `GBM_zh1019inf.zip`, is a zip file, not a tar.gz.
 **Known gaps**
 
 - The README lists no R packages or versions beyond R 4.1.1, and calls the code "working code", not a cleaned release.
-- The R code reads from `Inputs.zip` on Google Drive, not from Zenodo, and its size is not stated.
-- Whether Figs. 4A–C can be reached from the Zenodo Visium archives alone, without `Inputs.zip`, is unknown.
+- The R code reads from `Inputs.zip` on Google Drive, not from Zenodo. It is 6.07 GB. On Nov 18 Google Drive refused it twice from the cluster with its download-limit message ("Too many users have viewed or downloaded this file recently"; Google says this can last up to 24 hours). It downloaded without problems on Nov 16.
+- Figs. 4A–C cannot be reached with the authors' code from Zenodo alone. Module 2 reads the authors' spot labels (`MP/mp_assign_124/`), the windows in `Spatial_coh_zones/sc_windows/` and `CNA/mal_lev.rds`, which are only in `Inputs.zip`; with the spot positions, the files Module 2 reads total about 8.6 MB. `Inputs.zip` also holds 26 glioblastoma samples, against 13 on Zenodo.
 
 **Commands**
 
@@ -255,7 +255,7 @@ To load one sample, first look at what step 5 unpacked. If it looks like Space R
 
 | Item | Result |
 | --- | --- |
-| Date and cluster tested | Nov 16, 2026. **Codespace test**, not the cluster: a GitHub Codespace built from the draft dev container (`python:3.12-bookworm`), 4 cores, 15 GB RAM (more than the 2-core student Codespace), 9.6 GB free on `/workspaces`. Downloads went to `/tmp`, a separate temporary disk, and were deleted afterwards. |
+| Date and cluster tested | Nov 16, 2026. **Codespace test**, not the cluster: a GitHub Codespace built from the draft dev container (`python:3.12-bookworm`), 4 cores, 15 GB RAM (more than the 2-core student Codespace), 9.6 GB free on `/workspaces`. Downloads went to `/tmp`, a separate temporary disk, and were deleted afterwards. Also tested on the cluster (cbsuvlaminck6) on Nov 16 and again on Nov 18: the Zenodo listing was unchanged, and the 22 files downloaded again in 340 s with matching md5. `Inputs.zip` downloaded on Nov 16 (72 s) but was refused on Nov 18 (see Problems). |
 | Visium archives: count and total compressed size | 20 archives: 13 glioblastoma (`GBM_*`, 12.6–49.9 MB each, about 404 MB) and 7 IDH-mutant (`IDHm_*`, about 119 MB). With the two description files, 22 files, 523 MB. The whole record lists 38 files, 25.3 GB. `IDHm_BWH35A.tar.gz` (45 bytes) is an empty tar archive. |
 | One sample unpacked: size and contents | `GBM_MGH258`: 69 MB. One flat folder of Space Ranger outputs with sample-prefixed names: `mgh258_filtered_feature_bc_matrix.h5`, `mgh258_matrix.mtx`, `mgh258_features.tsv`, `mgh258_barcodes.tsv.gz`, `mgh258_tissue_positions_list.csv`, `mgh258_scalefactors_json.json`, `mgh258_tissue_lowres_image.png`, `mgh258_metrics.csv` and two JPEGs, plus macOS `._*` and `.DS_Store` files. There is no `spatial/` folder. |
 | All 13 glioblastoma samples unpacked: size | 1.1 GB (16–141 MB each). |
@@ -265,7 +265,7 @@ To load one sample, first look at what step 5 unpacked. If it looks like Space R
 | `Inputs.zip`: reachable? size? contents | Yes, with `gdown` 6.5.1 and no login. 6,068,488,734 bytes; 1,331 files, 7.87 GB unpacked. Unpacked by folder: `general/` 4.95 GB (`GBM_data` 4.43 GB, `exp_mats_GBM` 0.51 GB), `MP` 1.91 GB, `ST_align` 0.68 GB, `Codex` 0.30 GB, `CNA` 0.02 GB; `Spatial_coh_zones`, `Spatial_relationships` and `Summary_tables` are each under 10 MB. |
 | R packages Module 2 needed | Not run in the Codespace test. |
 | Tools and packages the download needs | Zenodo files: `curl`, `python3` (standard library only, to read the Zenodo listing), `md5sum`, `tar`, and `unzip` for `GBM_zh1019inf.zip`. `Inputs.zip` on Google Drive: the Python package `gdown` (`pip install gdown`; it also installs requests, beautifulsoup4, tqdm and filelock). Plain `curl` was not tried for Google Drive. No login was asked. Disk: `Inputs.zip` is 6.07 GB and unpacks to 7.9 GB, about 14 GB with both, close to the 15 GB of free Codespace storage. Codespace test: confirmed, with `gdown` installed by pip in a virtual environment. With 9.6 GB free on `/workspaces`, the zip and its full contents do not fit together; unpack only the folders a module needs, or delete the zip after unpacking part of it. |
-| Problems | None with access. Zenodo is slow (5 minutes for 523 MB). `Inputs.zip` with its full contents does not fit on this Codespace's persistent disk. The samples are not in the standard Space Ranger layout. `IDHm_BWH35A.tar.gz` is empty. |
+| Problems | On Nov 18, Google Drive refused `Inputs.zip` twice, four minutes apart, from the cluster: "Too many users have viewed or downloaded this file recently" (a download limit, not a login; Google says up to 24 hours). If several groups download it on the same day, some may be blocked; one download per group is safer. Zenodo is slow (5 minutes for 523 MB). `Inputs.zip` with its full contents does not fit on this Codespace's persistent disk. The samples are not in the standard Space Ranger layout. `IDHm_BWH35A.tar.gz` is empty. |
 | **Verdict** | **Ready with a subset**: the 13 `GBM_*` archives and the two description files from Zenodo (about 0.4 GB), and from `Inputs.zip` only the folders the chosen module reads. The whole of `Inputs.zip` does not fit unpacked in a Codespace. |
 
 ---
@@ -346,7 +346,7 @@ If the run stops at a step that needs `meta$Sex`, record the line, comment out t
 
 | Item | Result |
 | --- | --- |
-| Date and cluster tested | Nov 16, 2026. **Codespace test**, not the cluster: a GitHub Codespace built from the draft dev container (`python:3.12-bookworm`), 4 cores, 15 GB RAM (more than the 2-core student Codespace), 9.6 GB free on `/workspaces`. Downloads went to `/tmp`, a separate temporary disk, and were deleted afterwards. The test covered the download only. |
+| Date and cluster tested | Nov 16, 2026. **Codespace test**, not the cluster: a GitHub Codespace built from the draft dev container (`python:3.12-bookworm`), 4 cores, 15 GB RAM (more than the 2-core student Codespace), 9.6 GB free on `/workspaces`. Downloads went to `/tmp`, a separate temporary disk, and were deleted afterwards. The test covered the download only. Also cloned on the cluster (cbsuvlaminck6) on Nov 16 and again on Nov 18: same commit `ea83463`, 1 s. |
 | Repo size | 62 MB without `.git`, 106 MB with it (shallow clone of commit `ea83463`, June 16, 2025); the clone took 2 s. All `.gz` files pass `gzip -t`. `pdac_genecount.csv.gz` reads as 56,607 genes × 248 samples, and `pdac_meta.csv` has 248 rows: CEDAR 153, BCC 95. The metadata have no sex column, and age is in 10-year bins. `Figures/` holds 22 files. |
 | Runs after fixes? Run time, memory | Not run in the Codespace test. |
 | Number of DE genes (paper: 29) | Not run in the Codespace test. |
@@ -379,7 +379,7 @@ Massoni-Badosa R, Aguilar-Fernández S, Nieto JC, Soler-Vila P, Elosua-Bayes M, 
 | Browser | [Azimuth tonsil reference](https://azimuth.hubmapconsortium.org/references/#Human%20-%20Tonsil%20v2) | Interactive markers and label transfer | n/a |
 | Code | GitHub [Single-Cell-Genomics-Group-CNAG-CRG/TonsilAtlas](https://github.com/Single-Cell-Genomics-Group-CNAG-CRG/TonsilAtlas) | The full research pipeline (1,747 files) and HTML reports; `scRNA-seq/figures_and_tables/` holds the scripts for most figures | Not measured |
 
-I read the GitHub README and file list on Nov 16, 2026, but downloaded no data.
+Data downloaded and checked on Nov 16 and Nov 18, 2026; see "Check results" below.
 
 **The main constraint: size.** The whole RNA atlas will not fit in an 8 GB Codespace. A group must pick one compartment, such as myeloid cells or plasma cells, and load only that.
 
@@ -395,7 +395,7 @@ I read the GitHub README and file list on Nov 16, 2026, but downloaded no data.
 - **Access is through R.** HCATonsilData is a Bioconductor package; a Python group would convert a compartment to `.h5ad` with zellkonverter, in R, first.
 - **The code is a full research pipeline, not a one-command reproduction.** It spans Seurat 3.2 and 4.1, Signac, pySCENIC and cluster job scripts. Current Seurat is version 5, so old scripts may not run unchanged. That suits an independent reproduction better than a rerun.
 - **Annotations are updated over time.** HCATonsilData has a `version` argument; record which version a group used, since cell-type names and counts can change between versions.
-- **Per-compartment sizes are not documented.** The cluster test should record them.
+- **Per-compartment sizes are not documented** by the authors. The download test measured them: myeloid 170 MB, plasma cells 473 MB.
 
 **Possible extensions**
 
@@ -449,14 +449,14 @@ Repeat step 4 for the plasma-cell compartment. Do not load `cellType = "All"` on
 
 | Item | Result |
 | --- | --- |
-| Date and cluster tested | Nov 16, 2026. **Codespace test**, not the cluster: a GitHub Codespace built from the draft dev container (`python:3.12-bookworm`), 4 cores, 15 GB RAM (more than the 2-core student Codespace), 9.6 GB free on `/workspaces`. The ExperimentHub cache was set to `/tmp`, a separate temporary disk, with `EXPERIMENT_HUB_CACHE`, and deleted afterwards. |
+| Date and cluster tested | Nov 16, 2026. **Codespace test**, not the cluster: a GitHub Codespace built from the draft dev container (`python:3.12-bookworm`), 4 cores, 15 GB RAM (more than the 2-core student Codespace), 9.6 GB free on `/workspaces`. The ExperimentHub cache was set to `/tmp`, a separate temporary disk, with `EXPERIMENT_HUB_CACHE`, and deleted afterwards. Also tested on the cluster (cbsuvlaminck6) on Nov 16 and again on Nov 18, with R 4.5.2 and HCATonsilData 1.8.0: the myeloid and PC compartments downloaded into an empty cache in 18 s and 23 s, with the same dimensions, and the repo cloned in 88 s (HEAD `d14e0a8`, 2.2 GB without `.git`). |
 | GitHub repo size | Not cloned, as advised above for a Codespace. `git ls-remote` reaches it (HEAD `d14e0a8`). The three Zenodo records are open: 11355186 (version 3.0, 47.1 GB), 10373041 (version 2.0, 43.0 GB) and 8373756 (51.8 GB). |
 | Compartments listed | `listCellTypes(assayType = "RNA")`: All, NBC-MBC, GCBC, PC, CD4-T, Cytotoxic, myeloid, FDC, epithelial, PDC. |
 | Myeloid: cells × genes, download size, peak memory | 5,334 cells × 37,378 genes. 170 MB in the cache, including 10 MB of hub metadata. 8 s to download and load; 1.4 GB peak memory (RSS). The counts are HDF5-backed (`DelayedMatrix`); reading all of them took 17 s. |
 | Plasma cells: cells × genes, download size, peak memory | `cellType = "PC"`: 14,256 cells × 37,378 genes. 473 MB added to the cache. 9 s to download and load; 1.6 GB peak memory; reading all counts took 35 s. |
 | Annotation columns and version | `version = "2.0"` (the default) in HCATonsilData 1.10.0. 39 `colData` columns, including `donor_id` (17 donors), `sex`, `age`, `age_group`, `hospital`, `cohort_type` (discovery, validation), `annotation_level_1`, `annotation_figure_1`, `annotation_20220215`, `annotation_20220619`, and `annotation_20230508` with its probability. In the myeloid compartment, `annotation_20230508` has 19 labels, including the four slan-like subtypes (SELENOP, C1Q, MMP and ITGAX Slan-like). In the plasma-cell compartment it has 21 labels with cells, including `csMBC` and `PC committed Light Zone GCBC`; check against the 20 subpopulations of Fig. 5A. |
 | Opens in scanpy after conversion? | Not tested; `zellkonverter` was not installed. |
-| Scripts for Figs. 5A and 6D | Not checked, because the repo was not cloned. |
+| Scripts for Figs. 5A and 6D | Not cloned in the Codespace. In the cluster clone (Nov 18), the script names in `scRNA-seq/figures_and_tables/figures/` follow a different figure numbering from the Immunity paper: myeloid cells are `plot_figure_4_myeloid.R` and `plot_myeloid_cells.R`, the `plot_figure_7_*` scripts are about mantle cell lymphoma, and no script is named for plasma cells. Matching scripts to Figs. 5A and 6D needs reading them (not done). |
 | Tools and packages the download needs | R, because the data come down inside R through ExperimentHub. `HCATonsilData` needs R 4.3 or later; the test used R 4.5.2, Bioconductor 3.22 and HCATonsilData 1.8.0. Debian 12's own `r-base` is R 4.2.2, which is too old, so install R from CRAN's repository or use a rocker image. Install `BiocManager` from CRAN, then `BiocManager::install("HCATonsilData")`. On a bare R this is 90 packages, 50 of them compiled from source. Those builds need a C/C++ compiler and the development files for libcurl, OpenSSL and ImageMagick's Magick++ (`libmagick++-dev`, for the `magick` package). On the cluster most packages were already installed, so only 10 were added, in 111 s; a bare Codespace will take much longer (not measured). In an interactive R session, ExperimentHub may first ask to create its cache folder; answer yes. Code: `git`, but the shallow clone is 2.3 GB, so do not clone it in a Codespace. A Python group also needs `zellkonverter` in R to convert to `.h5ad` (not yet tested). Codespace test: CRAN's Debian repository could not be used, because its signing key (fingerprint `95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7`) expired on Nov 15, 2026 and apt rejects the repository; CRAN's suite for R 4.6 on Debian 12 is now `bookworm-cran46/`. R 4.6.0 was installed instead from Posit's Debian 12 build (`https://cdn.posit.co/r/debian-12/pkgs/r-4.6.0_1_amd64.deb`), with `libmagick++-dev`, `libcurl4-openssl-dev`, `libssl-dev`, `libxml2-dev` and `libfontconfig1-dev` from apt; that took 8 s. Then `BiocManager::install("HCATonsilData")`, with CRAN packages as binaries from Posit Package Manager: 92 packages (48 binary, 44 from source, including Rhdf5lib) in 504 s on 4 cores; Bioconductor 3.23, HCATonsilData 1.10.0. |
 | Problems | None with the data. Installing R from CRAN's Debian repository fails until CRAN renews its signing key (see above). |
 | **Verdict** | **Ready with a subset**: one compartment at a time through HCATonsilData (myeloid 170 MB, plasma cells 473 MB). Needs R 4.3 or later. |
@@ -469,7 +469,7 @@ Wu SZ, …, Swarbrick A. *A single-cell and spatially resolved atlas of human br
 
 **Published before 2024.** Allowed under the relaxed year rule because its data are open in several places and well documented.
 
-**What it is.** A single-cell atlas of the breast tumor microenvironment: 26 primary tumors (11 triple-negative, 10 ER+, 5 HER2+) and more than 100,000 cells, with CITE-seq protein data for part of the cohort and Visium spatial data for 5 more tumors. Analysis is in R (Seurat).
+**What it is.** A single-cell atlas of the breast tumor microenvironment: 26 primary tumors (11 ER+, 10 triple-negative, 5 HER2+, counted by patient in the GEO metadata) and more than 100,000 cells, with CITE-seq protein data for part of the cohort and Visium spatial data for 5 more tumors. Analysis is in R (Seurat).
 
 **Why it fits the class.** It is a single study, not a merged atlas, so its labels are consistent. The processed data with cell-type labels are open without application, the code is public, and a group can work on one compartment of cells at a time.
 
@@ -477,14 +477,14 @@ Wu SZ, …, Swarbrick A. *A single-cell and spatially resolved atlas of human br
 
 | Source | What it holds | Size |
 | --- | --- | --- |
-| GEO [GSE176078](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE176078) | Processed scRNA-seq counts with metadata | Unknown; not checked |
-| CELLxGENE [collection 65db5560](https://cellxgene.cziscience.com/collections/65db5560-7aeb-4c66-b150-5bd914480eb8) | The same processed data as `.h5ad`, plus the spatial data | Unknown; could not be read from here |
+| GEO [GSE176078](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE176078) | Processed scRNA-seq counts with metadata | 559 MB (`GSE176078_Wu_etal_2021_BRCA_scRNASeq.tar.gz`) |
+| CELLxGENE [collection dea97145](https://cellxgene.cziscience.com/collections/dea97145-f712-431c-a223-6b5f565f362a) | The same processed data as `.h5ad`, plus the spatial data. The older ID `65db5560-…` returns 403 from the API | 13 datasets: full atlas 848 MB; one compartment 18–323 MB |
 | Broad Single Cell Portal [SCP1039](https://singlecell.broadinstitute.org/single_cell/study/SCP1039) | Processed data and CITE-seq data | Downloads need sign-in; use GEO or CELLxGENE instead |
 | Zenodo [10.5281/zenodo.4739739](https://doi.org/10.5281/zenodo.4739739) | Intermediate spatial files | Not needed |
 | EGA EGAS00001005173 | Raw reads | Controlled; not needed |
 | GitHub [Swarbricklab-code/BrCa_cell_atlas](https://github.com/Swarbricklab-code/BrCa_cell_atlas) | 115 files: per-sample processing, integration, reclustering, inferCNV, SCSubtype (with its gene signatures, Supplementary Table S4), ecotypes, spatial analysis, figure scripts | Small |
 
-I read the GitHub README and file list on Nov 16, 2026, but downloaded no data.
+Data downloaded and checked on Nov 16 and Nov 18, 2026; see "Check results" below.
 
 **Compartment sizes reported in the paper**
 
@@ -507,7 +507,7 @@ I read the GitHub README and file list on Nov 16, 2026, but downloaded no data.
 
 - **Not a one-command reproduction.** The repo is a set of research scripts organized by analysis step, mostly R, with cluster job scripts. It has no top-level run script or package list.
 - **Ecotypes are out of reach.** The nine ecotypes use CIBERSORTx, which needs registration for a token, plus METABRIC bulk data. Leave them out.
-- **Download sizes are unknown.** GEO and CELLxGENE could not be listed from here; the cluster test should record them.
+- **Download sizes** are in "Check results": the GEO bundle is 559 MB; the CELLxGENE myeloid file is 98 MB and the cancer-epithelial file 323 MB.
 - **Labels can differ by source.** CELLxGENE re-curates metadata to its own schema, so record which file a group used.
 
 **Possible extensions**
@@ -566,15 +566,15 @@ PY
 
 | Item | Result |
 | --- | --- |
-| Date and cluster tested | Nov 16, 2026. **Codespace test**, not the cluster: a GitHub Codespace built from the draft dev container (`python:3.12-bookworm`), 4 cores, 15 GB RAM (more than the 2-core student Codespace), 9.6 GB free on `/workspaces`. Downloads went to `/tmp`, a separate temporary disk, and were deleted afterwards. |
+| Date and cluster tested | Nov 16, 2026. **Codespace test**, not the cluster: a GitHub Codespace built from the draft dev container (`python:3.12-bookworm`), 4 cores, 15 GB RAM (more than the 2-core student Codespace), 9.6 GB free on `/workspaces`. Downloads went to `/tmp`, a separate temporary disk, and were deleted afterwards. Also tested on the cluster (cbsuvlaminck6) on Nov 16 and again on Nov 18: the GEO bundle and the CELLxGENE myeloid and cancer-epithelial files downloaded again, byte-identical to the Nov 16 copies. On Nov 18 GEO dropped the connection three times, and `curl --retry` recovered (97 s instead of 5 s). |
 | GEO: files and sizes | Three series files: `GSE176078_Wu_etal_2021_BRCA_scRNASeq.tar.gz`, 558,829,202 bytes (the one needed); `GSE176078_RAW.tar`, 558,264,320 bytes (per-sample bundles for the 26 samples); and `GSE176078_Wu_etal_2021_bulkRNAseq_raw_counts.txt.gz`, 5,532,343 bytes. The needed bundle downloaded in 10 s and unpacks in 14 s to 2.3 GB: `count_matrix_sparse.mtx` (2.4 GB), `count_matrix_genes.tsv`, `count_matrix_barcodes.tsv` and `metadata.csv` (11 MB). |
-| CELLxGENE: file size; same labels? | The collection ID in this file (`65db5560-…`) is an old version: the page opens in a browser, but the curation API answers 403 for it. The current ID is `dea97145-f712-431c-a223-6b5f565f362a`, with 13 datasets: the full atlas, 848 MB (100,064 cells); T cells 172 MB; cancer epithelial 323 MB; stromal 178 MB; myeloid 98 MB; plasmablasts 21 MB; B cells 18 MB; and 6 Visium datasets of 214 MB–1.85 GB. The myeloid file downloaded in 0.3 s, its size matching the listing: 9,675 cells × 28,468 genes. It has the same `celltype_major`, `celltype_minor`, `celltype_subset` and `subtype` columns as GEO, plus CELLxGENE's schema columns and clinical fields (ER, PR, HER2, Ki67, treatment). |
-| Cells × genes; label columns | GEO: 29,733 genes × 100,064 cells from 26 patients. `metadata.csv` columns: `orig.ident`, `nCount_RNA`, `nFeature_RNA`, `percent.mito`, `subtype`, `celltype_major` (9 levels), `celltype_minor` (29) and `celltype_subset` (49). Patients by `subtype`: 11 ER+, 10 TNBC, 5 HER2+, the reverse of this file's "11 triple-negative, 10 ER+". |
+| CELLxGENE: file size; same labels? | The collection ID this file first listed (`65db5560-…`) is an old version: the page opens in a browser, but the curation API answers 403 for it. The current ID is `dea97145-f712-431c-a223-6b5f565f362a`, with 13 datasets: the full atlas, 848 MB (100,064 cells); T cells 172 MB; cancer epithelial 323 MB; stromal 178 MB; myeloid 98 MB; plasmablasts 21 MB; B cells 18 MB; and 6 Visium datasets of 214 MB–1.85 GB. The myeloid file downloaded in 0.3 s, its size matching the listing: 9,675 cells × 28,468 genes. It has the same `celltype_major`, `celltype_minor`, `celltype_subset` and `subtype` columns as GEO, plus CELLxGENE's schema columns and clinical fields (ER, PR, HER2, Ki67, treatment). |
+| Cells × genes; label columns | GEO: 29,733 genes × 100,064 cells from 26 patients. `metadata.csv` columns: `orig.ident`, `nCount_RNA`, `nFeature_RNA`, `percent.mito`, `subtype`, `celltype_major` (9 levels), `celltype_minor` (29) and `celltype_subset` (49). Patients by `subtype`: 11 ER+, 10 TNBC, 5 HER2+ (this file first had "11 triple-negative, 10 ER+"; corrected Nov 18). |
 | Myeloid and neoplastic cells (paper: 9,675 and 24,489) | 9,675 Myeloid and 24,489 Cancer Epithelial in `celltype_major`, both matching. The rest: T cells 35,214, Endothelial 7,605, CAFs 6,573, PVL 5,423, Normal Epithelial 4,355, Plasmablasts 3,524 (this file: 3,525), B cells 3,206 (this file: 3,202). All cells except cancer and normal epithelium: 71,220, matching. |
 | SCSubtype script: runs? Packages needed | Not run in the Codespace test. The repo cloned in 1 s (38 MB, 115 files); `scSubtype/` holds `Calculatingscoresandplotting.R`, `Highest_calls.R` and `NatGen_Supplementary_table_S4.csv`. |
 | Peak memory to load one compartment | Not measured for one compartment. The whole GEO matrix, loaded with `scipy` (all 100,064 cells), took 7 s with 4.96 GB peak memory, which is tight in an 8 GB Codespace. The CELLxGENE myeloid file opened in backed mode. |
 | Tools and packages the download needs | `curl`, `python3` (standard library only, to read the CELLxGENE listing) and `tar`. Nothing to install. GEO and CELLxGENE give no checksums, so compare file sizes with the listing instead. Opening the files needs `scanpy` or `anndata` for the `.h5ad` files, and `scanpy` or R's `Matrix` package for the GEO matrix bundle (not yet tested). Codespace test: confirmed, nothing installed for the download. `anndata` and `scipy` (pip, in a virtual environment) opened both formats. |
-| Problems | None with access. The CELLxGENE collection ID in this file is out of date; use `dea97145-f712-431c-a223-6b5f565f362a`. Loading the whole matrix takes about 5 GB of memory; the per-compartment CELLxGENE files are lighter. |
+| Problems | None with access. The CELLxGENE collection ID this file first listed was out of date; use `dea97145-f712-431c-a223-6b5f565f362a` (now in "Where the data are"). Loading the whole matrix takes about 5 GB of memory; the per-compartment CELLxGENE files are lighter. |
 | **Verdict** | **Ready.** Use the GEO bundle (559 MB) or one CELLxGENE compartment file (myeloid 98 MB, cancer epithelial 323 MB). |
 
 ---
