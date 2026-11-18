@@ -4,15 +4,17 @@ Nov 18, 2026 · Shaowen Jiang
 
 ## At a glance
 
-The Agentic AI Project asks you to pick one of five published papers, revisit one of its analyses, then extend it. You hand in a five-page report and a GitHub repository by **Dec 8, 2026**.
+The Agentic AI Project asks you to pick one of five published papers, reproduce some of its findings or figures, then extend the analysis. You are strongly encouraged to use an AI coding agent for the work. Before our next class on **Mon Nov 23**, set up your environment, try the agent, and get your data ready. You hand in a five-page report and a GitHub repository by **Dec 8, 2026**.
 
 | Item | Requirement |
 | --- | --- |
-| Task | Choose one of five candidate papers; revisit a published analysis, then extend it |
+| Task | Choose one of five candidate papers; reproduce some of its findings or figures, then extend the analysis |
 | Report | 5 pages, as HTML or PDF |
-| Code | A GitHub repository with your analysis |
+| Code | A GitHub repository with your analysis: scripts, plus a Jupyter notebook that compiles the results and figures |
 | Team | Work alone or in a team of 2–3 people |
-| Due | Dec 8, 2026 |
+| AI agents | Strongly encouraged |
+| Before Nov 23 | Set up the environment, try the agent, get the data ready |
+| Due | Dec 8, 2026, by email |
 | Workspace | GitHub Codespace from your own copy of the [template repo](https://github.com/ShaowenJCornell/Agentic-AI-session-TA) |
 
 ## What to submit
@@ -21,11 +23,11 @@ The report is five pages: two per section, plus one page that holds every figure
 
 | Part | Length | What goes in it |
 | --- | --- | --- |
-| Section 1 | 2 pages | Revisit a published analysis from your chosen paper |
+| Section 1 | 2 pages | Reproduce some of the findings or figures from your chosen paper |
 | Section 2 | 2 pages | Extend that analysis in an interesting way |
 | Figures | 1 page | All figures for the report |
 
-Alongside the report, submit the link to a GitHub repository with the code for your analysis. Submit the report as HTML or PDF.
+Email the report, as HTML or PDF, together with the link to your GitHub repository, to the TA, Shaowen Jiang, by Dec 8, 2026. The repository should hold everything behind the report, such as the scripts of your analysis, a Jupyter notebook that compiles the results and figures, and the script that downloads your data.
 
 ## Choose a paper
 
@@ -49,14 +51,19 @@ When you plan your analysis, count the right n. The independent units are far fe
 | Massoni-Badosa | 17 donors | >556,000 cells | CITE-seq, ATAC, cell sorting |
 | Wu | 26 tumors | 130,246 cells | Bulk RNA-seq, IHC |
 
-## Set up and get the data
+## Before Nov 23: set up and get the data
+
+Please do this before our next class on Mon Nov 23: set up the environment, try the agent at least a few times, and get your data ready.
 
 Every paper's data was test-downloaded in a Codespace on Nov 16, 2026, and again on a Cornell compute cluster on Nov 18, 2026; all five are usable, three of them as a subset. On Nov 18 every needed file downloaded from its public link with no login, except Greenwald's `Inputs.zip` on Google Drive, which was refused after too many downloads (see the table below).
 
 1. Make your own copy of the [template repo](https://github.com/ShaowenJCornell/Agentic-AI-session-TA): **Use this template → Create a new repository**. In a team, one person makes the copy and adds the others under **Settings → Collaborators**. Then, in your copy, open **Code → Codespaces → Create codespace on main**. Do not open a codespace on the template repo itself: you cannot push to it, and your own repository is what you hand in.
-2. The container gives you Python 3.12, Node.js and four coding agents: Claude Code (`claude`), GitHub Copilot CLI (`copilot`), OpenAI Codex CLI (`codex`) and Google Antigravity CLI (`agy`). R is not in the container yet, although four of the five papers use R. Until it is, install R 4.3 or later yourself as described for Candidate 4 in [`bme6120-candidate-papers.md`](../bme6120-candidate-papers.md) ("Tools and packages the download needs"): CRAN's Debian repository cannot be used at the moment because its signing key expired, but Posit's R build works.
-3. Download only the files listed below, by script. Never put downloaded data in git, and never download raw reads (FASTQ, SRA, EGA). Free Codespace storage is 15 GB a month.
-4. Full download commands and test results for each paper are in [`bme6120-candidate-papers.md`](../bme6120-candidate-papers.md) in the repo.
+2. The container gives you Python 3.12, Node.js and four coding agents: Claude Code (`claude`), GitHub Copilot CLI (`copilot`), OpenAI Codex CLI (`codex`) and Google Antigravity CLI (`agy`). R is not in the container yet, although four of the five papers use R. Until it is, install R 4.3 or later yourself as described for Candidate 4 in [`bme6120-candidate-papers.md`](../bme6120-candidate-papers.md) ("Tools and packages the download needs"): CRAN's Debian repository cannot be used at the moment because its signing key expired, but Posit's R build works. Then install the packages your paper needs, such as `scanpy` (`pip install scanpy`) or Seurat in R.
+3. Try the agent. Sign in to at least one agent and try it on a few small tasks, for example asking it to explain the files in your repository or to draft your download script. GitHub Copilot is free on GitHub's student plan (apply through [GitHub Education](https://education.github.com) now, since approval can take a few days); Codex is included with ChatGPT plans, including Free; Claude Code needs a paid Claude plan. Two sign-in tips for Codespaces:
+   - Codex: sign in with `codex login --device-auth`, then enter the code it prints at the address it shows, in any browser.
+   - Claude Code: if sign-in ends on "This site can't be reached" at `http://localhost:<port>`, open the **Ports** tab, copy the `https://...` forwarded address for that port, and put it in place of `http://localhost:<port>` in the address bar, keeping everything after the port number.
+4. Get the data ready: download only the files listed below, by script, and check that they open. Never put downloaded data in git, and never download raw reads (FASTQ, SRA, EGA). Free Codespace storage is 15 GB a month.
+5. Full download commands and test results for each paper are in [`bme6120-candidate-papers.md`](../bme6120-candidate-papers.md) in the repo.
 
 | Paper | What to download | Size | Watch out for |
 | --- | --- | --- | --- |
